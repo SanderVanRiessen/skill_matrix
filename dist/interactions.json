@@ -1,0 +1,1 @@
+[{"function":"function hello(_a) {\n    var name = _a.name;\n    return \"Hello \" + (name || 'World') + \"!\";\n}\n","name":"hello","parameters":{"name":"String"},"type":"String"}]
