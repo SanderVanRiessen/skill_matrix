@@ -1,8 +1,8 @@
 (() => ({
-  name: "datatable",
-  type: "BODY_COMPONENT",
+  name: 'datatable',
+  type: 'BODY_COMPONENT',
   allowedTypes: [],
-  orientation: "HORIZONTAL",
+  orientation: 'HORIZONTAL',
   jsx: (() => {
     const { gql } = window;
     const { GetAll, Query, env } = B;
@@ -14,12 +14,22 @@
       TableBody,
       Checkbox,
       Chip,
+      IconButton,
     } = window.MaterialUI.Core;
     const { DataGrid, GridToolbar } = window.MaterialUI.Datagrid;
     const { XGrid } = window.MaterialUI.XGrid;
     const { Info } = window.MaterialUI.Icons;
 
-    const isDev = env === "dev";
+    const [gridRef, setGridRef] = useState(false);
+
+    const isDev = env === 'dev';
+
+    useEffect(() => {
+      if (gridRef) {
+        var parentElement = document.getElementsByClassName('MuiDataGrid-main');
+        parentElement[0].children[0].style.display = 'none';
+      }
+    }, [gridRef]);
 
     const GET_USERINFO = gql`
       query Items {
@@ -28,6 +38,7 @@
             id
             name
             userskills {
+              id
               status
               isMastered
               masteredSubskillCount
@@ -59,38 +70,40 @@
       }
     `;
 
-    const columns = [
-      { field: "id", headerName: "ID", width: 70 },
-      { field: "name", headerName: "name", width: 200 },
-      {
-        field: "teamjobs",
-        headerName: "Team/Jobs",
-        width: 130,
-      },
-    ];
-    const row = [];
-
     function Skill({ value }) {
       if (value)
         return (
           <div>
+            {<Checkbox defaultChecked color="primary" />}
+            {value.masteredSubskillCount + '/' + value.skill.subskillCount}
             {
-              <Chip
-                icon={<Info />}
-                label={
-                  value.masteredSubskillCount + "/" + value.skill.subskillCount
-                }
-                variant="outlined"
-              />
+              <IconButton
+                onClick={() => B.triggerEvent('onClickSkill', value.id)}
+              >
+                <Info />
+              </IconButton>
             }
           </div>
         );
       return (
         <div>
-          <input type="checkbox" disabled />
+          {
+            <Checkbox
+              disabled
+              inputProps={{ 'aria-label': 'disabled checkbox' }}
+            />
+          }
         </div>
       );
     }
+
+    // function IsMastered({ value }) {
+    //   console.log(value);
+    //   if (value) {
+    //     return true;
+    //   }
+    //   return false;
+    // }
 
     function table() {
       return (
@@ -100,50 +113,67 @@
           pollInterval={1000}
         >
           {({ loading, error, data }) => {
-            if (loading) return "Loading...";
+            if (loading) return 'Loading...';
             if (error) return `Error! ${error.message}`;
+
             const {
               allUser: { results: userResults },
               allSkills: { results: skillsResults },
             } = data;
-            skillsResults.forEach((element) => {
+
+            const columns = [
+              { field: 'id', headerName: 'ID', width: 70 },
+              { field: 'name', headerName: 'name', width: 200 },
+              {
+                field: 'teamjobs',
+                headerName: 'Team/Jobs',
+                width: 130,
+              },
+            ];
+            const row = [];
+
+            skillsResults.forEach(element => {
               columns.push({
                 field: element.id,
                 headerName: element.name,
-                renderCell: (params) => <Skill value={params.value} />,
+                //valueGetter: params => <IsMastered value={params.value} />,
+                renderCell: params => <Skill value={params.value} />,
+                width: 150,
               });
             });
 
             const ar = [];
-            skillsResults.forEach((element) => {
+            skillsResults.forEach(element => {
               ar.push(element.id);
             });
 
-            userResults.forEach((element) => {
+            userResults.forEach(element => {
               const rowObject = {
                 id: element.id,
                 name: element.name,
-                teamjobs: element.userteamjobs.map((team) => team.teamjob.name),
+                teamjobs: element.userteamjobs.map(team => team.teamjob.name),
               };
 
-              ar.forEach((id) => {
-                const usk = element.userskills.find((el) => el.skill.id == id);
+              ar.forEach(id => {
+                const usk = element.userskills.find(el => el.skill.id == id);
 
                 if (usk) {
                   return (rowObject[id] = usk);
                 } else {
-                  return "undifined";
+                  return 'undifined';
                 }
               });
-
-              console.log("Row object", rowObject);
-
               row.push(rowObject);
             });
 
             return (
-              <div style={{ height: 400, width: "100%" }}>
-                <XGrid rows={row} columns={columns} pageSize={5} />
+              <div style={{ height: 400, width: '100%' }}>
+                <XGrid
+                  ref={el => setGridRef(el)}
+                  rows={row}
+                  columns={columns}
+                  pageSize={5}
+                />
               </div>
             );
           }}
@@ -157,14 +187,14 @@
       table()
     );
   })(),
-  styles: (B) => (theme) => {
+  styles: B => theme => {
     const style = new B.Styling(theme);
     return {
       root: {
-        textAlign: "left",
+        textAlign: 'left',
       },
       placeholder: {
-        padding: "10px",
+        padding: '10px',
       },
     };
   },
