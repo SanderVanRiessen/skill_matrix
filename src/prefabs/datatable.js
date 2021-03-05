@@ -1,10 +1,10 @@
 (() => ({
-  name: 'datatable',
-  icon: 'DataContainer',
-  category: 'TABLE',
+  name: "datatable",
+  icon: "DataContainer",
+  category: "TABLE",
   structure: [
     {
-      name: 'datatable',
+      name: "datatable",
       options: [],
       descendants: [],
     },
