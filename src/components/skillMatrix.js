@@ -12,13 +12,17 @@
       TableHead,
       TableRow,
       TableBody,
-      Checkbox,
-      Chip,
       IconButton,
+      CheckBox,
     } = window.MaterialUI.Core;
-    const { DataGrid, GridToolbar } = window.MaterialUI.Datagrid;
+
     const { XGrid } = window.MaterialUI.XGrid;
-    const { Info } = window.MaterialUI.Icons;
+
+    const {
+      Info,
+      CheckBox: CheckBoxIcon,
+      CheckBoxOutlineBlank,
+    } = window.MaterialUI.Icons;
 
     const [gridRef, setGridRef] = useState(false);
 
@@ -73,26 +77,19 @@
     function Skill({ value }) {
       if (value)
         return (
-          <div>
-            {<Checkbox defaultChecked color="primary" />}
+          <div className={classes.cell}>
+            <CheckBoxIcon className={classes.check} />
             {value.masteredSubskillCount + '/' + value.skill.subskillCount}
-            {
-              <IconButton
-                onClick={() => B.triggerEvent('onClickSkill', value.id)}
-              >
-                <Info />
-              </IconButton>
-            }
+            <IconButton
+              onClick={() => B.triggerEvent('onClickSkill', value.id)}
+            >
+              <Info />
+            </IconButton>
           </div>
         );
       return (
-        <div>
-          {
-            <Checkbox
-              disabled
-              inputProps={{ 'aria-label': 'disabled checkbox' }}
-            />
-          }
+        <div className={classes.cell}>
+          <CheckBoxOutlineBlank className={classes.check} />
         </div>
       );
     }
@@ -129,12 +126,14 @@
             const row = [];
 
             skillsResults.forEach(element => {
+              const width = element.name.length * 7 + 50;
+              console.log(width);
               columns.push({
                 field: element.id,
                 headerName: element.name,
                 //valueGetter: params => <IsMastered value={params.value} />,
                 renderCell: params => <Skill value={params.value} />,
-                width: 150,
+                width: width < 120 ? 120 : width,
               });
             });
 
@@ -191,6 +190,16 @@
       },
       placeholder: {
         padding: '10px',
+      },
+      cell: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'left',
+        width: '100%',
+      },
+      check: {
+        marginRight: '10px',
       },
     };
   },
