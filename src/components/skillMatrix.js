@@ -107,11 +107,7 @@
 
     function table() {
       return (
-        <Query
-          fetchPolicy="network-only"
-          query={GET_USERINFO}
-          pollInterval={1000}
-        >
+        <Query fetchPolicy="network-only" query={GET_USERINFO}>
           {({ loading, error, data }) => {
             if (loading) return 'Loading...';
             if (error) return `Error! ${error.message}`;
