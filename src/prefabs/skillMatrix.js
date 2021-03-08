@@ -5,7 +5,20 @@
   structure: [
     {
       name: 'skillMatrix',
-      options: [],
+      options: [
+        {
+          type: 'COLOR',
+          label: 'Mastered Color',
+          key: 'masteredColor',
+          value: 'Primary',
+        },
+        {
+          type: 'COLOR',
+          label: 'Learning Color',
+          key: 'learningColor',
+          value: 'Secondary',
+        },
+      ],
       descendants: [],
     },
   ],

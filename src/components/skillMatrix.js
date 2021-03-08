@@ -78,12 +78,24 @@
       if (value)
         return (
           <div className={classes.cell}>
-            <CheckBoxIcon className={classes.check} />
+            {value.isMastered ? (
+              <CheckBoxIcon
+                className={[classes.check, classes.mastered].join(' ')}
+              />
+            ) : (
+              <CheckBoxOutlineBlank
+                className={[classes.check, classes.learning].join(' ')}
+              />
+            )}
             {value.masteredSubskillCount + '/' + value.skill.subskillCount}
             <IconButton
               onClick={() => B.triggerEvent('onClickSkill', value.id)}
             >
-              <Info />
+              <Info
+                className={[
+                  value.isMastered ? classes.mastered : classes.learning,
+                ].join(' ')}
+              />
             </IconButton>
           </div>
         );
@@ -94,13 +106,13 @@
       );
     }
 
-    // function IsMastered({ value }) {
-    //   console.log(value);
-    //   if (value) {
-    //     return true;
-    //   }
-    //   return false;
-    // }
+    function isMastered(value) {
+      console.log(value);
+      if (value && value.isMastered) {
+        return true;
+      }
+      return false;
+    }
 
     function table() {
       return (
@@ -115,7 +127,6 @@
             } = data;
 
             const columns = [
-              { field: 'id', headerName: 'ID', width: 70 },
               { field: 'name', headerName: 'name', width: 200 },
               {
                 field: 'teamjobs',
@@ -123,6 +134,7 @@
                 width: 130,
               },
             ];
+
             const row = [];
 
             skillsResults.forEach(element => {
@@ -131,7 +143,7 @@
               columns.push({
                 field: element.id,
                 headerName: element.name,
-                //valueGetter: params => <IsMastered value={params.value} />,
+                valueGetter: params => isMastered(params.value),
                 renderCell: params => <Skill value={params.value} />,
                 width: width < 120 ? 120 : width,
               });
@@ -146,7 +158,10 @@
               const rowObject = {
                 id: element.id,
                 name: element.name,
-                teamjobs: element.userteamjobs.map(team => team.teamjob.name),
+                teamjobs:
+                  element.userteamjobs.length > 0
+                    ? element.userteamjobs[0].teamjob.name
+                    : 'No Job',
               };
 
               ar.forEach(id => {
@@ -167,7 +182,6 @@
                   ref={el => setGridRef(el)}
                   rows={row}
                   columns={columns}
-                  pageSize={5}
                 />
               </div>
             );
@@ -200,6 +214,15 @@
       },
       check: {
         marginRight: '10px',
+        color: 'grey',
+      },
+      mastered: {
+        color: ({ options: { masteredColor } }) =>
+          style.getColor(masteredColor),
+      },
+      learning: {
+        color: ({ options: { learningColor } }) =>
+          style.getColor(learningColor),
       },
     };
   },
