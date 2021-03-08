@@ -1,5 +1,5 @@
 (() => ({
-  name: 'datatable',
+  name: 'skillMatrix',
   type: 'BODY_COMPONENT',
   allowedTypes: [],
   orientation: 'HORIZONTAL',
