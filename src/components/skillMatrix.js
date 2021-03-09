@@ -7,12 +7,9 @@
     const { gql } = window;
     const { GetAll, Query, env } = B;
     const {
-      Table,
-      TableCell,
-      TableHead,
-      TableRow,
-      TableBody,
       IconButton,
+      FormLabel,
+      FormControl,
       Checkbox: CheckFilter,
     } = window.MaterialUI.Core;
 
@@ -120,13 +117,17 @@
 
     function SkillInputValue(props) {
       const { item, applyValue } = props;
+      console.log(props);
       const handleFilterChange = event => {
         applyValue({ ...item, value: event.target.checked });
       };
 
       return (
         <div>
-          <CheckFilter onChange={handleFilterChange} />
+          <FormLabel className={classes.label} component="legend">
+            Value
+          </FormLabel>
+          <CheckFilter checked={item.value} onChange={handleFilterChange} />
         </div>
       );
     }
@@ -270,6 +271,10 @@
       learning: {
         color: ({ options: { learningColor } }) =>
           style.getColor(learningColor),
+      },
+      label: {
+        transform: 'translate(0, 1.5px) scale(0.75)',
+        transformOrigin: 'top left',
       },
     };
   },
