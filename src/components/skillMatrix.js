@@ -13,10 +13,15 @@
       TableRow,
       TableBody,
       IconButton,
-      CheckBox,
+      Checkbox: CheckFilter,
     } = window.MaterialUI.Core;
 
-    const { XGrid } = window.MaterialUI.XGrid;
+    const { Rating } = window.MaterialUI.Lab;
+    const {
+      XGrid,
+      getGridNumericColumnOperators,
+      GridPreferencePanelsValue,
+    } = window.MaterialUI.XGrid;
 
     const {
       Info,
@@ -107,11 +112,23 @@
     }
 
     function isMastered(value) {
-      console.log(value);
       if (value && value.isMastered) {
         return true;
       }
       return false;
+    }
+
+    function SkillInputValue(props) {
+      const { item, applyValue } = props;
+      const handleFilterChange = event => {
+        applyValue({ ...item, value: event.target.checked });
+      };
+
+      return (
+        <div>
+          <CheckFilter onChange={handleFilterChange} />
+        </div>
+      );
     }
 
     function table() {
@@ -139,7 +156,6 @@
 
             skillsResults.forEach(element => {
               const width = element.name.length * 7 + 50;
-              console.log(width);
               columns.push({
                 field: element.id,
                 headerName: element.name,
@@ -174,6 +190,29 @@
                 }
               });
               row.push(rowObject);
+
+              columns.forEach(column => {
+                if (typeof column.field === 'number') {
+                  const skillColumn = columns.find(
+                    findcolumn => findcolumn.field === column.field,
+                  );
+                  const skillColIndex = columns.findIndex(
+                    indexcol => indexcol.field === column.field,
+                  );
+
+                  const ratingFilterOperators = getGridNumericColumnOperators().map(
+                    operator => ({
+                      ...operator,
+                      InputComponent: SkillInputValue,
+                    }),
+                  );
+
+                  columns[skillColIndex] = {
+                    ...skillColumn,
+                    filterOperators: ratingFilterOperators,
+                  };
+                }
+              });
             });
 
             return (
@@ -182,6 +221,11 @@
                   ref={el => setGridRef(el)}
                   rows={row}
                   columns={columns}
+                  state={{
+                    preferencePanel: {
+                      openedPanelValue: GridPreferencePanelsValue.filters,
+                    },
+                  }}
                 />
               </div>
             );
