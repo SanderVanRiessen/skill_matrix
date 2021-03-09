@@ -19,7 +19,7 @@
     const { Rating } = window.MaterialUI.Lab;
     const {
       XGrid,
-      getGridNumericColumnOperators,
+      getGridStringOperators,
       GridPreferencePanelsValue,
     } = window.MaterialUI.XGrid;
 
@@ -200,16 +200,16 @@
                     indexcol => indexcol.field === column.field,
                   );
 
-                  const ratingFilterOperators = getGridNumericColumnOperators().map(
-                    operator => ({
+                  const skillFilterOperators = getGridStringOperators()
+                    .filter(op => op.value == 'contains')
+                    .map(operator => ({
                       ...operator,
                       InputComponent: SkillInputValue,
-                    }),
-                  );
+                    }));
 
                   columns[skillColIndex] = {
                     ...skillColumn,
-                    filterOperators: ratingFilterOperators,
+                    filterOperators: skillFilterOperators,
                   };
                 }
               });
