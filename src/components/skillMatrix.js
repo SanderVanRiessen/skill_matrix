@@ -91,7 +91,9 @@
             )}
             {value.masteredSubskillCount + '/' + value.skill.subskillCount}
             <IconButton
-              onClick={() => B.triggerEvent('onClickSkill', value.id)}
+              onClick={() => {
+                B.triggerEvent('onClickSkill', value.id);
+              }}
             >
               <Info
                 className={[
@@ -160,6 +162,7 @@
               columns.push({
                 field: element.id,
                 headerName: element.name,
+                disableClickEventBubbling: true,
                 valueGetter: params => isMastered(params.value),
                 renderCell: params => <Skill value={params.value} />,
                 width: width < 120 ? 120 : width,
@@ -222,9 +225,10 @@
                   ref={el => setGridRef(el)}
                   rows={row}
                   columns={columns}
-                  onRowClick={params =>
-                    B.triggerEvent('onClickRow', params.row)
-                  }
+                  onRowClick={params => {
+                    console.log(params);
+                    B.triggerEvent('onRowClick', params.row.id);
+                  }}
                   state={{
                     preferencePanel: {
                       openedPanelValue: GridPreferencePanelsValue.filters,
