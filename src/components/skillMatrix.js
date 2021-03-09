@@ -182,6 +182,9 @@
                   ref={el => setGridRef(el)}
                   rows={row}
                   columns={columns}
+                  onRowClick={params =>
+                    B.triggerEvent('onClickRow', params.row)
+                  }
                 />
               </div>
             );
