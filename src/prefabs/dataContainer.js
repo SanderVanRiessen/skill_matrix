@@ -1,7 +1,7 @@
 (() => ({
-  name: "DataContainer",
-  icon: "DataContainer",
-  category: "DATA",
+  name: 'DataContainer',
+  icon: 'DataContainer',
+  category: 'DATA',
   beforeCreate: ({
     prefab,
     save,
@@ -21,7 +21,7 @@
     helpers: { useCurrentPageId, camelToSnakeCase, useModelQuery },
   }) => {
     const [anotherPageState, setAnotherPageState] = React.useState({
-      modelId: "",
+      modelId: '',
     });
 
     const [modelId, setModelId] = React.useState(null);
@@ -35,10 +35,10 @@
       component: null,
     });
 
-    const [validationMessage, setValidationMessage] = React.useState("");
+    const [validationMessage, setValidationMessage] = React.useState('');
 
     const [buttonGroupValue, setButtonGroupValue] = React.useState(
-      "anotherPage"
+      'anotherPage',
     );
     const pageUuid = useCurrentPageId();
     const { data, loading } = useModelQuery({
@@ -46,47 +46,47 @@
     });
 
     React.useEffect(() => {
-      setValidationMessage("");
+      setValidationMessage('');
     }, [buttonGroupValue]);
 
     const validate = () => {
       if (loading) {
         setValidationMessage(
-          "Model details are still loading, please try submitting again."
+          'Model details are still loading, please try submitting again.',
         );
         return false;
       }
 
       switch (buttonGroupValue) {
-        case "anotherPage":
+        case 'anotherPage':
           if (!data || !data.model) {
-            setValidationMessage("Model is required.");
+            setValidationMessage('Model is required.');
             return false;
           }
           if (!anotherPageState.modelId) {
-            setValidationMessage("Model id is required.");
+            setValidationMessage('Model id is required.');
             return false;
           }
           break;
-        case "thisPage":
+        case 'thisPage':
           if (!thisPageState.component) {
-            setValidationMessage("Component is required.");
+            setValidationMessage('Component is required.');
             return false;
           }
           if (!data || !data.model) {
-            setValidationMessage("Model is required.");
+            setValidationMessage('Model is required.');
             return false;
           }
           if (!thisPageState.modelId) {
             setValidationMessage(
-              "The selected component does not have a model."
+              'The selected component does not have a model.',
             );
             return false;
           }
           break;
-        case "loggedInUser":
+        case 'loggedInUser':
           if (!loggedInUserState.authenticationProfile) {
-            setValidationMessage("Authentication Profile is required.");
+            setValidationMessage('Authentication Profile is required.');
             return false;
           }
           break;
@@ -101,15 +101,15 @@
       if (validate()) {
         const newPrefab = { ...prefab };
         const idProperty = data.model.properties.find(
-          (property) => property.name === "id"
+          property => property.name === 'id',
         );
         const variableName = `${camelToSnakeCase(data.model.label)}_id`;
         newPrefab.variables.push({
-          kind: "integer",
+          kind: 'integer',
           name: variableName,
           pageId: pageUuid,
           ref: {
-            id: "#idVariable",
+            id: '#idVariable',
           },
         });
 
@@ -118,9 +118,9 @@
         newPrefab.structure[0].options[2].value = {
           [idProperty.id]: {
             eq: {
-              ref: { id: "#idVariable" },
+              ref: { id: '#idVariable' },
               name: variableName,
-              type: "VARIABLE",
+              type: 'VARIABLE',
             },
           },
         };
@@ -132,27 +132,27 @@
       if (validate()) {
         const newPrefab = { ...prefab };
         const idProperty = data.model.properties.find(
-          (property) => property.name === "id"
+          property => property.name === 'id',
         );
         newPrefab.structure[0].options[0].value = thisPageState.modelId;
         newPrefab.interactions.push({
-          name: "setCurrentRecord",
+          name: 'setCurrentRecord',
           sourceEvent:
-            thisPageState.component.name === "DataTable"
-              ? "OnRowClick"
-              : "OnItemClick",
-          targetOptionName: "currentRecord",
+            thisPageState.component.name === 'DataTable'
+              ? 'OnRowClick'
+              : 'OnItemClick',
+          targetOptionName: 'currentRecord',
           parameters: [
             {
               id: [idProperty.id],
-              parameter: "argument",
+              parameter: 'argument',
             },
           ],
           sourceComponentId: thisPageState.component.id,
           ref: {
-            targetComponentId: "#dataContainer",
+            targetComponentId: '#dataContainer',
           },
-          type: "Global",
+          type: 'Global',
         });
         save(newPrefab);
       }
@@ -180,12 +180,12 @@
             label="Where is the data coming from?"
             info={
               <Text size="small" color="grey700">
-                {buttonGroupValue === "anotherPage" &&
-                  "Link from another page to this page, and pass the ID property of the model."}
-                {buttonGroupValue === "thisPage" &&
-                  "A component on this page is passing the data to this DataContainer."}
-                {buttonGroupValue === "loggedInUser" &&
-                  "Data from the logged in user can be used inside this DataContainer."}
+                {buttonGroupValue === 'anotherPage' &&
+                  'Link from another page to this page, and pass the ID property of the model.'}
+                {buttonGroupValue === 'thisPage' &&
+                  'A component on this page is passing the data to this DataContainer.'}
+                {buttonGroupValue === 'loggedInUser' &&
+                  'Data from the logged in user can be used inside this DataContainer.'}
               </Text>
             }
           >
@@ -213,7 +213,7 @@
               />
             </ButtonGroup>
           </Field>
-          {buttonGroupValue === "anotherPage" && (
+          {buttonGroupValue === 'anotherPage' && (
             <Field
               label="Model"
               error={
@@ -228,8 +228,8 @@
               }
             >
               <ModelSelector
-                onChange={(id) => {
-                  setAnotherPageState((prevState) => ({
+                onChange={id => {
+                  setAnotherPageState(prevState => ({
                     ...prevState,
                     modelId: id,
                   }));
@@ -240,7 +240,7 @@
               />
             </Field>
           )}
-          {buttonGroupValue === "thisPage" && (
+          {buttonGroupValue === 'thisPage' && (
             <Field
               label="Component"
               error={
@@ -256,13 +256,13 @@
               }
             >
               <ComponentSelector
-                onChange={(component) => {
+                onChange={component => {
                   const foundModelId = Object.values(component.options).reduce(
                     (acc, option) =>
-                      option.type === "MODEL" ? option.value : acc,
-                    null
+                      option.type === 'MODEL' ? option.value : acc,
+                    null,
                   );
-                  setThisPageState((prevState) => ({
+                  setThisPageState(prevState => ({
                     ...prevState,
                     modelId: foundModelId,
                     component,
@@ -270,14 +270,14 @@
                   setModelId(foundModelId);
                 }}
                 value={
-                  thisPageState.component ? thisPageState.component.id : ""
+                  thisPageState.component ? thisPageState.component.id : ''
                 }
                 placeholder="No components available."
-                allowedComponents={["DataTable", "DataList"]}
+                allowedComponents={['DataTable', 'DataList']}
               />
             </Field>
           )}
-          {buttonGroupValue === "loggedInUser" && (
+          {buttonGroupValue === 'loggedInUser' && (
             <Field
               label="Authentication Profile"
               error={
@@ -294,7 +294,7 @@
             >
               <AuthenticationProfileSelector
                 onChange={(id, authProfileObject) => {
-                  setLoggedInUserState((prevState) => ({
+                  setLoggedInUserState(prevState => ({
                     ...prevState,
                     authenticationProfile: authProfileObject,
                   }));
@@ -302,7 +302,7 @@
                 value={
                   loggedInUserState.authenticationProfile
                     ? loggedInUserState.authenticationProfile.id
-                    : ""
+                    : ''
                 }
               />
             </Field>
@@ -315,16 +315,16 @@
             save(newPrefab);
           }}
           onSave={() => {
-            setValidationMessage("");
+            setValidationMessage('');
             switch (buttonGroupValue) {
-              case "anotherPage":
+              case 'anotherPage':
                 saveAnotherPage();
                 break;
-              case "thisPage":
+              case 'thisPage':
                 saveThisPage();
                 break;
 
-              case "loggedInUser":
+              case 'loggedInUser':
                 saveLoggedInUser();
                 break;
               default:
@@ -339,63 +339,63 @@
   variables: [],
   structure: [
     {
-      name: "DataContainer",
+      name: 'DataContainer',
       ref: {
-        id: "#dataContainer",
+        id: '#dataContainer',
       },
       options: [
         {
-          value: "",
-          label: "Model",
-          key: "model",
-          type: "MODEL",
+          value: '',
+          label: 'Model',
+          key: 'model',
+          type: 'MODEL',
         },
         {
-          value: "",
-          label: "Current Record",
-          key: "currentRecord",
-          type: "NUMBER",
+          value: '',
+          label: 'Current Record',
+          key: 'currentRecord',
+          type: 'NUMBER',
           configuration: {
             condition: {
-              type: "SHOW",
-              option: "currentRecord",
-              comparator: "EQ",
-              value: "never",
+              type: 'SHOW',
+              option: 'currentRecord',
+              comparator: 'EQ',
+              value: 'never',
             },
           },
         },
         {
           value: {},
-          label: "Filter",
-          key: "filter",
-          type: "FILTER",
+          label: 'Filter',
+          key: 'filter',
+          type: 'FILTER',
           configuration: {
-            dependsOn: "model",
+            dependsOn: 'model',
           },
         },
         {
-          value: "",
-          label: "Authentication Profile",
-          key: "authProfile",
-          type: "AUTHENTICATION_PROFILE",
+          value: '',
+          label: 'Authentication Profile',
+          key: 'authProfile',
+          type: 'AUTHENTICATION_PROFILE',
         },
         {
-          value: "",
-          label: "Redirect when no result",
-          key: "redirectWithoutResult",
-          type: "ENDPOINT",
+          value: '',
+          label: 'Redirect when no result',
+          key: 'redirectWithoutResult',
+          type: 'ENDPOINT',
         },
         {
-          value: "built-in",
-          label: "Error message",
-          key: "showError",
-          type: "CUSTOM",
+          value: 'built-in',
+          label: 'Error message',
+          key: 'showError',
+          type: 'CUSTOM',
           configuration: {
-            as: "BUTTONGROUP",
-            dataType: "string",
+            as: 'BUTTONGROUP',
+            dataType: 'string',
             allowedInput: [
-              { name: "Built in", value: "built-in" },
-              { name: "Interaction", value: "interaction" },
+              { name: 'Built in', value: 'built-in' },
+              { name: 'Interaction', value: 'interaction' },
             ],
           },
         },
