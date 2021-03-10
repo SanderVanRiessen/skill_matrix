@@ -18,6 +18,12 @@
           key: 'learningColor',
           value: 'Secondary',
         },
+        {
+          type: 'VARIABLE',
+          label: 'Query text',
+          key: 'queryText',
+          value: [''],
+        },
       ],
       descendants: [],
     },

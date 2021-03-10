@@ -4,8 +4,9 @@
   allowedTypes: [],
   orientation: 'HORIZONTAL',
   jsx: (() => {
+    const { queryText } = options;
     const { gql } = window;
-    const { GetAll, Query, env } = B;
+    const { GetAll, Query, env, useText } = B;
     const {
       IconButton,
       FormLabel,
@@ -45,7 +46,6 @@
             name
             userskills {
               id
-              status
               isMastered
               masteredSubskillCount
               skill {
@@ -55,7 +55,6 @@
                 subskills {
                   id
                   name
-                  status
                 }
               }
             }
@@ -226,7 +225,6 @@
                   rows={row}
                   columns={columns}
                   onRowClick={params => {
-                    console.log(params);
                     B.triggerEvent('onRowClick', params.row.id);
                   }}
                   state={{
