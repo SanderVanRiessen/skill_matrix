@@ -55,7 +55,6 @@
                 subskills {
                   id
                   name
-                  status
                 }
               }
             }
@@ -135,10 +134,9 @@
     function table() {
       return (
         <Query fetchPolicy="network-only" query={GET_USERINFO}>
-          {({ loading, error, data }) => {
+          {({ loading, error, data, refetch }) => {
             if (loading) return 'Loading...';
             if (error) return `Error! ${error.message}`;
-
             const {
               allUser: { results: userResults },
               allSkills: { results: skillsResults },
@@ -152,6 +150,8 @@
                 width: 130,
               },
             ];
+
+            B.defineFunction('RefetchSkillMatrix', () => refetch());
 
             const row = [];
 
@@ -217,21 +217,18 @@
             });
 
             return (
-              <div style={{ height: 400, width: '100%' }}>
-                <XGrid
-                  ref={el => setGridRef(el)}
-                  rows={row}
-                  columns={columns}
-                  onRowClick={params =>
-                    B.triggerEvent('onClickRow', params.row)
-                  }
-                  state={{
-                    preferencePanel: {
-                      openedPanelValue: GridPreferencePanelsValue.filters,
-                    },
-                  }}
-                />
-              </div>
+              <XGrid
+                ref={el => setGridRef(el)}
+                rows={row}
+                autoHeight={true}
+                columns={columns}
+                onRowClick={params => B.triggerEvent('onClickRow', params.row)}
+                state={{
+                  preferencePanel: {
+                    openedPanelValue: GridPreferencePanelsValue.filters,
+                  },
+                }}
+              />
             );
           }}
         </Query>
