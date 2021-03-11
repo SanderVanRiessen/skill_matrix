@@ -136,10 +136,9 @@
     function table() {
       return (
         <Query fetchPolicy="network-only" query={GET_USERINFO}>
-          {({ loading, error, data }) => {
+          {({ loading, error, data, refetch }) => {
             if (loading) return 'Loading...';
             if (error) return `Error! ${error.message}`;
-
             const {
               allUser: { results: userResults },
               allSkills: { results: skillsResults },
@@ -153,6 +152,8 @@
                 width: 130,
               },
             ];
+
+            B.defineFunction('RefetchSkillMatrix', () => refetch());
 
             const row = [];
 
