@@ -219,21 +219,20 @@
             });
 
             return (
-              <div style={{ height: 400, width: '100%' }}>
-                <XGrid
-                  ref={el => setGridRef(el)}
-                  rows={row}
-                  columns={columns}
-                  onRowClick={params => {
-                    B.triggerEvent('onRowClick', params.row.id);
-                  }}
-                  state={{
-                    preferencePanel: {
-                      openedPanelValue: GridPreferencePanelsValue.filters,
-                    },
-                  }}
-                />
-              </div>
+              <XGrid
+                ref={el => setGridRef(el)}
+                rows={row}
+                autoHeight={true}
+                columns={columns}
+                onRowClick={params => {
+                  B.triggerEvent('onRowClick', params.row.id);
+                }}
+                state={{
+                  preferencePanel: {
+                    openedPanelValue: GridPreferencePanelsValue.filters,
+                  },
+                }}
+              />
             );
           }}
         </Query>
