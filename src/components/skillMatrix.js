@@ -43,7 +43,8 @@
         allUser {
           results {
             id
-            name
+            fullName
+            isTalent
             userskills {
               id
               isMastered
@@ -145,7 +146,16 @@
             } = data;
 
             const columns = [
-              { field: 'name', headerName: 'name', width: 200 },
+              {
+                field: 'fullName',
+                headerName: 'name',
+                width: 200,
+                cellClassName: params => {
+                  if (params.row.isTalent) {
+                    return classes.talent;
+                  }
+                },
+              },
               {
                 field: 'teamjobs',
                 headerName: 'Team/Jobs',
@@ -177,7 +187,8 @@
             userResults.forEach(element => {
               const rowObject = {
                 id: element.id,
-                name: element.name,
+                isTalent: element.isTalent,
+                fullName: element.fullName,
                 teamjobs:
                   element.userteamjobs.length > 0
                     ? element.userteamjobs[0].teamjob.name
@@ -277,6 +288,9 @@
       label: {
         transform: 'translate(0, 1.5px) scale(0.75)',
         transformOrigin: 'top left',
+      },
+      talent: {
+        fontWeight: 'bold',
       },
     };
   },
