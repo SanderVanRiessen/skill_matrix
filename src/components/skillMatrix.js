@@ -79,28 +79,31 @@
     function Skill({ value }) {
       if (value)
         return (
-          <div className={classes.cell}>
+          <div
+            onClick={() => {
+              B.triggerEvent('onClickSkill', value.id);
+            }}
+            className={classes.cell}
+          >
             {value.isMastered ? (
               <CheckBoxIcon
                 className={[classes.check, classes.mastered].join(' ')}
               />
             ) : (
               <CheckBoxOutlineBlank
-                className={[classes.check, classes.learning].join(' ')}
-              />
-            )}
-            {value.masteredSubskillCount + '/' + value.skill.subskillCount}
-            <IconButton
-              onClick={() => {
-                B.triggerEvent('onClickSkill', value.id);
-              }}
-            >
-              <Info
                 className={[
-                  value.isMastered ? classes.mastered : classes.learning,
+                  classes.check,
+                  value.skill.subskillCount > 0 &&
+                  value.masteredSubskillCount > 0
+                    ? classes.learning
+                    : classes.todo,
                 ].join(' ')}
               />
-            </IconButton>
+            )}
+
+            {value.skill.subskillCount > 0
+              ? `${value.masteredSubskillCount}/${value.skill.subskillCount}`
+              : ''}
           </div>
         );
       return (
@@ -112,16 +115,16 @@
 
     function isMastered(value) {
       if (value && value.isMastered) {
-        return true;
+        return 'true';
       }
-      return false;
+      return 'false';
     }
 
     function SkillInputValue(props) {
       const { item, applyValue } = props;
-      console.log(props);
       const handleFilterChange = event => {
-        applyValue({ ...item, value: event.target.checked });
+        console.log(event.target.checked);
+        applyValue({ ...item, value: String(event.target.checked) });
       };
 
       return (
@@ -129,7 +132,10 @@
           <FormLabel className={classes.label} component="legend">
             Value
           </FormLabel>
-          <CheckFilter checked={item.value} onChange={handleFilterChange} />
+          <CheckFilter
+            checked={item.value === 'true' ? true : false}
+            onChange={handleFilterChange}
+          />
         </div>
       );
     }
@@ -140,6 +146,8 @@
           {({ loading, error, data, refetch }) => {
             if (loading) return 'Loading...';
             if (error) return `Error! ${error.message}`;
+
+            B.defineFunction('RefetchSkillMatrix', () => refetch());
             const {
               allUser: { results: userResults },
               allSkills: { results: skillsResults },
@@ -162,8 +170,6 @@
                 width: 130,
               },
             ];
-
-            B.defineFunction('RefetchSkillMatrix', () => refetch());
 
             const row = [];
 
@@ -216,7 +222,7 @@
                   );
 
                   const skillFilterOperators = getGridStringOperators()
-                    .filter(op => op.value == 'contains')
+                    .filter(op => op.value == 'equals')
                     .map(operator => ({
                       ...operator,
                       InputComponent: SkillInputValue,
@@ -272,6 +278,7 @@
         alignItems: 'center',
         justifyContent: 'left',
         width: '100%',
+        cursor: 'pointer',
       },
       check: {
         marginRight: '10px',
@@ -284,6 +291,9 @@
       learning: {
         color: ({ options: { learningColor } }) =>
           style.getColor(learningColor),
+      },
+      todo: {
+        color: ({ options: { todoColor } }) => style.getColor(todoColor),
       },
       label: {
         transform: 'translate(0, 1.5px) scale(0.75)',

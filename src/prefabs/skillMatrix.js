@@ -19,6 +19,12 @@
           value: 'Secondary',
         },
         {
+          type: 'COLOR',
+          label: 'Todo',
+          key: 'todoColor',
+          value: 'White',
+        },
+        {
           type: 'VARIABLE',
           label: 'Query text',
           key: 'queryText',
